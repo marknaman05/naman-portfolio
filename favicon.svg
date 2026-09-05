@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <rect width="32" height="32" fill="#f3f2f2"/>
+  <g font-family="Georgia, 'Times New Roman', serif" font-size="27" font-weight="700" text-anchor="middle" style="isolation:isolate">
+    <text x="16.9" y="25.4" fill="#d6006c" style="mix-blend-mode:multiply">N</text>
+    <text x="15.1" y="24.2" fill="#edbb00" style="mix-blend-mode:multiply">N</text>
+    <text x="16.0" y="24.8" fill="#0088b0" style="mix-blend-mode:multiply">N</text>
+  </g>
+</svg>
