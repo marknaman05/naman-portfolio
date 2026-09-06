@@ -214,6 +214,7 @@ mkdirSync(join(DIST, "uploads"), { recursive: true });
 copyFileSync(join(ROOT, "uploads/Resume_Naman_Ajay_Markhedkar.pdf"),
   join(DIST, "uploads/Resume_Naman_Ajay_Markhedkar.pdf"));
 copyFileSync(join(ROOT, "favicon.svg"), join(DIST, "favicon.svg"));
+copyFileSync(join(ROOT, "ads.txt"), join(DIST, "ads.txt"));
 
 // dist/ is a plain static site — no framework for Vercel to detect, and no
 // server-side routing to configure: app.js's #skills-style deep links are
