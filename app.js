@@ -9,10 +9,11 @@
   const FORMSPREE_ID = "__FORMSPREE_ID__";
   const CONTACT_EMAIL = "__CONTACT_EMAIL__";
 
-  const HINTS = ["try: experience", "try: skills", "try: wins", "try: contact", "try: all", "try: help"];
+  const HINTS = ["try: experience", "try: projects", "try: skills", "try: wins", "try: contact", "try: all", "try: help"];
   const ROUTES = {
-    all: ["metrics", "work", "skills", "wins", "contact"],
+    all: ["metrics", "work", "projects", "skills", "wins", "contact"],
     work: ["work"], experience: ["work"],
+    projects: ["projects"], claude: ["projects"], built: ["projects"],
     skills: ["skills"], stack: ["skills"],
     wins: ["wins"], achievements: ["wins"], education: ["wins"],
     numbers: ["metrics"], metrics: ["metrics"],
@@ -45,7 +46,7 @@
     if (c === "help" || c === "?") {
       route = "all";
       cmd.value = "";
-      feedback.textContent = "Commands: experience · skills · wins · numbers · contact · resume · all";
+      feedback.textContent = "Commands: experience · projects · skills · wins · numbers · contact · resume · all";
       apply();
       return;
     }
@@ -54,7 +55,7 @@
       route = c;
       cmd.value = "";
       feedback.textContent = c === "all"
-        ? "Showing the full edition — five sections."
+        ? `Showing the full edition — ${ROUTES.all.length} sections.`
         : `Filed: ${c} — ${n}${n === 1 ? " section." : " sections."}`;
       apply();
       cmd.blur();

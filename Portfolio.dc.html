@@ -174,6 +174,33 @@
     </section>
   </sc-if>
 
+  <sc-if value="{{ showProjects }}" hint-placeholder-val="{{ true }}">
+    <section style="margin-bottom: var(--space-8);">
+      <h2 style="margin: 0 0 var(--space-3); font-size: 13px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--color-neutral-700);">Built with Claude</h2>
+      <p style="margin: 0 0 var(--space-6); max-width: 58ch; font-size: 17px; line-height: 1.5;">Side projects built end to end in collaboration with Claude — designed, written, deployed and running in public.</p>
+      <!-- auto-fill, not auto-fit: keeps the empty tracks so a single card sits
+           at its natural width instead of stretching the full 1180px -->
+      <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: var(--space-4);">
+        <sc-for list="{{ projects }}" as="p" hint-placeholder-count="3">
+          <article style="display: flex; flex-direction: column; gap: var(--space-2); padding: var(--space-4); background: var(--color-surface); border: 1px solid var(--color-divider); border-top: 3px solid var(--color-text); border-radius: var(--radius-md);">
+            <p style="margin: 0; font-size: 12px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--color-accent-700);">{{ p.kicker }}</p>
+            <h3 style="margin: 0; font-size: clamp(21px, 2.3vw, 26px); line-height: 1.1;">{{ p.name }}</h3>
+            <p style="margin: 0; flex: 1; font-size: 16px; line-height: 1.5;">{{ p.blurb }}</p>
+            <div style="display: flex; flex-wrap: wrap; gap: var(--space-1);">
+              <sc-for list="{{ p.stack }}" as="s" hint-placeholder-count="3">
+                <span class="tag tag-outline">{{ s }}</span>
+              </sc-for>
+            </div>
+            <div style="display: flex; flex-wrap: wrap; gap: var(--space-3); margin-top: var(--space-1); font-size: 15px;">
+              <a href="{{ p.href }}" target="_blank" rel="noopener">{{ p.cta }}</a>
+              <a href="{{ p.repo }}" target="_blank" rel="noopener">Source</a>
+            </div>
+          </article>
+        </sc-for>
+      </div>
+    </section>
+  </sc-if>
+
   <sc-if value="{{ showSkills }}" hint-placeholder-val="{{ true }}">
     <section style="margin-bottom: var(--space-8);">
       <h2 style="margin: 0 0 var(--space-6); font-size: 13px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--color-neutral-700);">The toolkit</h2>
@@ -256,7 +283,7 @@
 
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props="{&quot;hero&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;plates&quot;,&quot;masthead&quot;,&quot;console&quot;],&quot;default&quot;:&quot;plates&quot;,&quot;tsType&quot;:&quot;'plates'|'masthead'|'console'&quot;,&quot;section&quot;:&quot;Hero&quot;},&quot;metricStyle&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;plates&quot;,&quot;plain&quot;],&quot;default&quot;:&quot;plates&quot;,&quot;tsType&quot;:&quot;'plates'|'plain'&quot;,&quot;section&quot;:&quot;Hero&quot;},&quot;motion&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;full&quot;,&quot;restrained&quot;],&quot;default&quot;:&quot;full&quot;,&quot;tsType&quot;:&quot;'full'|'restrained'&quot;,&quot;section&quot;:&quot;Motion&quot;}}">
-const HINTS = ['try: experience', 'try: skills', 'try: wins', 'try: contact', 'try: all', 'try: help'];
+const HINTS = ['try: experience', 'try: projects', 'try: skills', 'try: wins', 'try: contact', 'try: all', 'try: help'];
 const HEADLINES = ['experience', 'skills', 'wins', 'contact'];
 
 // formspree.io → New Form → paste the id from the endpoint (the part after /f/).
@@ -266,9 +293,12 @@ const FORMSPREE_ID = 'mgaelwdl';
 const CONTACT_EMAIL = 'marknaman05@gmail.com';
 
 const ROUTES = {
-  all: ['metrics', 'work', 'skills', 'wins', 'contact'],
+  all: ['metrics', 'work', 'projects', 'skills', 'wins', 'contact'],
   work: ['work'],
   experience: ['work'],
+  projects: ['projects'],
+  claude: ['projects'],
+  built: ['projects'],
   skills: ['skills'],
   stack: ['skills'],
   wins: ['wins'],
@@ -350,12 +380,12 @@ class Component extends DCLogic {
     const cmd = String(raw || '').trim().toLowerCase().replace(/^[/>›\s]+/, '');
     if (!cmd) return;
     if (cmd === 'help' || cmd === '?') {
-      this.setState({ route: 'all', query: '', feedback: 'Commands: experience · skills · wins · numbers · contact · resume · all' });
+      this.setState({ route: 'all', query: '', feedback: 'Commands: experience · projects · skills · wins · numbers · contact · resume · all' });
       return;
     }
     if (ROUTES[cmd]) {
       const n = ROUTES[cmd].length;
-      this.setState({ route: cmd, query: '', feedback: cmd === 'all' ? 'Showing the full edition — five sections.' : 'Filed: ' + cmd + ' — ' + n + (n === 1 ? ' section.' : ' sections.') });
+      this.setState({ route: cmd, query: '', feedback: cmd === 'all' ? 'Showing the full edition — ' + ROUTES.all.length + ' sections.' : 'Filed: ' + cmd + ' — ' + n + (n === 1 ? ' section.' : ' sections.') });
       const el = document.querySelector('input[aria-label="Command"]');
       if (el) el.blur();
       return;
@@ -368,7 +398,7 @@ class Component extends DCLogic {
     const metricStyle = this.props.metricStyle ?? 'plates';
     const motion = this.motion();
     const shown = ROUTES[this.state.route] || ROUTES.all;
-    const chipDefs = [['all', 'all'], ['experience', 'experience'], ['skills', 'skills'], ['education', 'education'], ['numbers', 'numbers'], ['contact', 'contact']];
+    const chipDefs = [['all', 'all'], ['experience', 'experience'], ['projects', 'projects'], ['skills', 'skills'], ['education', 'education'], ['numbers', 'numbers'], ['contact', 'contact']];
 
     return {
       edition: 'September 2026',
@@ -396,6 +426,7 @@ class Component extends DCLogic {
       })),
       showMetrics: shown.includes('metrics'),
       showWork: shown.includes('work'),
+      showProjects: shown.includes('projects'),
       showSkills: shown.includes('skills'),
       showWins: shown.includes('wins'),
       showContact: shown.includes('contact'),
@@ -458,6 +489,18 @@ class Component extends DCLogic {
             'Automating the first round cut HR workload by 50% — about 20 hours back every week.',
           ],
           stack: ['Angular', 'Node.js', 'WebRTC', 'SQL'],
+        },
+      ],
+      // Add future Claude-built projects here — the section renders from this list.
+      projects: [
+        {
+          name: 'Road Fighter Retro',
+          kicker: 'Live · 2026',
+          blurb: 'An arcade racer on HTML5 canvas with a synthesised engine that pitches up with your speed. Keyboard on desktop, multi-touch steering on phones.',
+          stack: ['Canvas', 'Web Audio API', 'Vanilla JS'],
+          href: 'https://roadfighter.mynameisnaman.in',
+          cta: 'Play it',
+          repo: 'https://github.com/marknaman05/roadfighter',
         },
       ],
       achievements: [

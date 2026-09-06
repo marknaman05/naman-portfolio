@@ -120,6 +120,7 @@ writeFileSync(join(DIST, "assets/portrait.webp"),
 const SECTIONS = [
   ["metrics", "By the numbers"],
   ["work", "The record"],
+  ["projects", "Built with Claude"],
   ["skills", "The toolkit"],
   ["wins", "Achievements"],
   ["contact", "Send a wire"],
