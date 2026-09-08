@@ -208,6 +208,19 @@ if (siteUrl) {
 }
 out = out.replace("</body>", '<script src="app.js" defer></script>\n</body>');
 
+// Microsoft Clarity. Injected here rather than into Portfolio.dc.html so the
+// tag never runs during the headless build — if it did, the snapshot would
+// bake in the loader script Clarity inserts at runtime and ship it twice.
+const clarity = `<script type="text/javascript">
+    (function(c,l,a,r,i,t,y){
+        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+    })(window, document, "clarity", "script", "yeo3c9or8i");
+</script>
+</head>`;
+out = out.replace("</head>", clarity);
+
 writeFileSync(join(DIST, "index.html"), out);
 
 cpSync(join(ROOT, DS), join(DIST, DS), { recursive: true });
