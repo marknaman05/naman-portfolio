@@ -182,7 +182,10 @@
            at its natural width instead of stretching the full 1180px -->
       <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: var(--space-4);">
         <sc-for list="{{ projects }}" as="p" hint-placeholder-count="3">
-          <article style="display: flex; flex-direction: column; gap: var(--space-2); padding: var(--space-4); background: var(--color-surface); border: 1px solid var(--color-divider); border-top: 3px solid var(--color-text); border-radius: var(--radius-md);">
+          <article style="position: relative; display: flex; flex-direction: column; gap: var(--space-2); padding: var(--space-4); background: var(--color-surface); border: 1px solid var(--color-divider); border-top: 3px solid var(--color-text); border-radius: var(--radius-md);">
+            <sc-if value="{{ p.featured }}" hint-placeholder-val="{{ false }}">
+              <span title="Highlighted project" style="position: absolute; top: -10px; left: -10px; width: 26px; height: 26px; display: grid; place-items: center; background: var(--color-text); color: var(--color-bg); border-radius: 50%; box-shadow: 0 2px 6px rgba(0,0,0,0.25); font-size: 13px; line-height: 1;">★</span>
+            </sc-if>
             <p style="margin: 0; font-size: 12px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--color-accent-700);">{{ p.kicker }}</p>
             <h3 style="margin: 0; font-size: clamp(21px, 2.3vw, 26px); line-height: 1.1;">{{ p.name }}</h3>
             <p style="margin: 0; flex: 1; font-size: 16px; line-height: 1.5;">{{ p.blurb }}</p>
@@ -493,6 +496,16 @@ class Component extends DCLogic {
       ],
       // Add future Claude-built projects here — the section renders from this list.
       projects: [
+        {
+          name: 'autocut',
+          kicker: 'Private beta \u00b7 2026',
+          blurb: 'Drop in a raw talking-head video, get back a finished vertical Reel: dead air, filler words and botched retakes cut automatically, face-tracked reframing, karaoke-style captions. Runs locally on Apple Silicon (MLX Whisper) and is served to invitees through a Cloudflare Access-gated tunnel.',
+          stack: ['MLX Whisper', 'FFmpeg', 'FastAPI', 'OpenCV'],
+          href: 'https://autocut.mynameisnaman.in',
+          cta: 'Preview',
+          repo: 'https://github.com/marknaman05/autocut',
+          featured: true,
+        },
         {
           name: 'Road Fighter Retro',
           kicker: 'Live · 2026',
