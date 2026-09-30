@@ -229,6 +229,9 @@ copyFileSync(join(ROOT, "uploads/Resume_Naman_Ajay_Markhedkar.pdf"),
   join(DIST, "uploads/Resume_Naman_Ajay_Markhedkar.pdf"));
 copyFileSync(join(ROOT, "favicon.svg"), join(DIST, "favicon.svg"));
 copyFileSync(join(ROOT, "ads.txt"), join(DIST, "ads.txt"));
+// the short film is its own self-contained page, served at /film
+mkdirSync(join(DIST, "film"), { recursive: true });
+copyFileSync(join(ROOT, "film/index.html"), join(DIST, "film/index.html"));
 
 // dist/ is a plain static site — no framework for Vercel to detect, and no
 // server-side routing to configure: app.js's #skills-style deep links are
