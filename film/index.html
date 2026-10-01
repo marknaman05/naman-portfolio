@@ -448,10 +448,23 @@ function run(){
     g.querySelector('p').textContent='mynameisnaman.in';document.getElementById('bPlay').textContent='Watch again';g.classList.remove('gone')});
 }
 
+/* ---------- voiceover (pre-rendered, aligned to the film clock) ---------- */
+const VO={raw:null,buf:null,src:null,t0:0,tok:0,
+ load(){this.raw=fetch('/film/voiceover.mp3').then(r=>r.ok?r.arrayBuffer():null).catch(()=>null)},
+ async play(){this.stop();const tok=this.tok;this.t0=A.now();
+  if(!this.buf){const raw=await this.raw;if(!raw)return;
+   try{this.buf=await new Promise((res,rej)=>A.ac.decodeAudioData(raw.slice(0),res,rej))}catch(e){return}}
+  if(tok!==this.tok)return;
+  const off=A.now()-this.t0;if(off>=this.buf.duration)return;
+  const s=A.ac.createBufferSource();s.buffer=this.buf;s.connect(A.m);s.start(0,off);this.src=s},
+ stop(){this.tok++;if(this.src){try{this.src.stop()}catch(e){}this.src=null}}
+};
+VO.load();
+
 /* ---------- controls ---------- */
 const ctl=document.querySelector('.ctl');
-function start(){stopAll();if(!A.ac)A.init();A.ac.resume();document.getElementById('gate').classList.add('gone');ctl.hidden=false;run()}
-function stopAll(){timers.forEach(clearTimeout);intervals.forEach(clearInterval);timers=[];intervals=[];pulseId=null;if(A.ac){A.padOff(.2);A.drone(0,.2)}}
+function start(){stopAll();if(!A.ac)A.init();A.ac.resume();document.getElementById('gate').classList.add('gone');ctl.hidden=false;run();VO.play()}
+function stopAll(){VO.stop();timers.forEach(clearTimeout);intervals.forEach(clearInterval);timers=[];intervals=[];pulseId=null;if(A.ac){A.padOff(.2);A.drone(0,.2)}}
 document.getElementById('bPlay').onclick=start;
 document.getElementById('bRe').onclick=start;
 document.getElementById('bCC').onclick=e=>{const on=film.classList.toggle('nocc');e.target.setAttribute('aria-pressed',String(!on))};
